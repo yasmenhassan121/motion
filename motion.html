@@ -1,0 +1,133 @@
+<html lang="en">
+    <head>
+        <title>Projectle Motion</title>
+        <style>
+            button {
+                background-color: #4CAF50;
+                /* Green */
+                border: none;
+                color: white;
+                padding: 15px 32px;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 16px;
+                margin: 7px 2px;
+                cursor: pointer;
+            }
+
+            .inp {
+                display: flex;
+                justify-content: center;
+                padding-top: 20px;
+            }
+
+            input {
+                padding: 0px 8px;
+                height: 53px;
+                margin: 6;
+            }
+
+            .canv {
+                position: absolute;
+                top: 110px;
+                left: 398px;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="inp">
+            <input id="ang" value="300" type="number" placeholder="Angle">
+            <input id="vi" value="6" type="number" placeholder="intial velocity">
+            <button onclick="launchApp()">Launch</button>
+            <button onclick="resetApp()">Reset</button>
+
+            <div>
+                <div class="canv">
+                    <canvas id="canvasOne" width="500" height="500">
+                    </canvas>
+                </div>
+
+                <script type="text/javascript">
+                    var theCanvas = document.getElementById("canvasOne");
+                    var context = theCanvas.getContext("2d");
+                    var gravity = .1;
+                    var radius = 15;;
+
+                    var p1 = {
+                        x: 20,
+                        y: theCanvas.width - radius
+                    };
+                    var ball = null;
+                    var interval = null;
+
+                    function drawCanvas() {
+                        context.fillStyle = '#EEEEEE';
+                        context.fillRect(0, 0, theCanvas.width, theCanvas.height);
+                        context.strokeStyle = '#4CAF50';
+                        context.strokeRect(1, 1, theCanvas.width - 2, theCanvas.height - 2);
+                    }
+
+                    function drawBall(vx, vy) {
+                        if (ball == null) {
+                            ball = {
+                                x: p1.x,
+                                y: p1.y,
+                                velocityx: vx,
+                                velocityy: vy,
+                                radius: radius
+                            };
+                        }
+                        context.fillStyle = "#000000";
+                        context.beginPath();
+                        context.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2, true);
+                        context.closePath();
+                        context.fill();
+                        
+                        if (ball.y + ball.radius <= theCanvas.height) {
+                            ball.velocityy += gravity;
+                        } else {
+                            ball.velocityx = 0;
+                            ball.velocityy = 0;
+                            ball.y = theCanvas.height - ball.radius;
+                            clearInterval(interval);
+                        }
+
+                        ball.y += ball.velocityy;
+                        ball.x += ball.velocityx;
+                    }
+
+                    function calcVelocity(angle, velocity) {
+                        var radians = angle * Math.PI / 180;
+                        var vx = Math.cos(radians) * velocity;
+                        var vy = Math.sin(radians) * velocity;
+                        var v = [vx, vy];
+                        return v;
+                    }
+
+                    function launchApp() {
+                        var angle = document.getElementById('ang').value;
+                        var velocity = document.getElementById('vi').value;
+                        let v = calcVelocity(angle, velocity);
+
+                        function startApp() {
+                            drawCanvas();
+                            drawBall(v[0], v[1]);
+                        }
+                        interval = setInterval(startApp, 33); 
+                    }
+
+                    function resetApp() {
+                        drawCanvas();
+                        ball = null;
+                        let v = calcVelocity(0, 0);
+                        drawBall(v[0], v[1]);
+                        ball = null;
+
+                    }
+                </script>
+
+    </body>
+
+</html>
